@@ -1,0 +1,36 @@
+
+.cache
+.DS_Store
+node_modules
+/dist
+/dist-ssr
+coverage
+.idx
+*.tsbuildinfo
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+# .vscode/*
+# !.vscode/*.code-snippets
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local Netlify folder
+.netlify
+
+# test folder
+/cypress

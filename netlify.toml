@@ -1,0 +1,17 @@
+# NOTE: Netlify 빌드 시 설정 파일
+# [참고] https://docs.netlify.com/configure-builds/file-based-configuration/#netlify-dev
+
+# 제품 모드
+[build]
+command = "npm run build" # 서버 실행 명령(스크립트) 명시
+functions = "functions"   # 서버리스 함수가 작성된 디렉토리 명시
+publish = "dist"          # 프로젝트 빌드 결과 디렉토리 명시
+
+# 개발 모드
+[dev]
+framework = "#custom"        # 감지할 프로젝트 유형 명시. (#custom: 앱 서버 및 'targetPort' 옵션을 실행)
+command = "npm run dev:vite"
+targetPort = 8079            # Netlify 서버에 연결할 프로젝트 개발 서버 포트 명시 (webpack.config.js 파일 참고)
+port = 8080                  # 브라우저에 출력할 Netlify 서버 포트 명시
+publish = "dist"
+autoLaunch = false           # Netlify 서버가 준비되면 자동으로 브라우저 오픈 여부 지정

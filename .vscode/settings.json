@@ -1,0 +1,36 @@
+{
+  "http.proxySupport": "off",
+  "terminal.integrated.localEchoLatencyThreshold": -1,
+  "terminal.integrated.localEchoEnabled": "off",
+  "workbench.colorTheme": "Dracula",
+  "editor.renderWhitespace": "all",
+  "editor.tabSize": 2,
+  "todohighlight.keywords": [
+    {
+      "text": "NOTE:",
+      "color": "#ffffff",
+      "backgroundColor": "deepskyblue",
+      "overviewRulerColor": "grey"
+    },
+    {
+      "text": "Vue:",
+      "color": "#ffffff",
+      "backgroundColor": "#42b883",
+      "overviewRulerColor": "grey"
+    },
+    {
+      "text": "Vite:",
+      "color": "#ffffff",
+      "backgroundColor": "#454ce1",
+      "overviewRulerColor": "grey"
+    },
+    {
+      "text": "★",
+      "color": "red",
+      "backgroundColor": "yellow",
+      "overviewRulerColor": "grey"
+    }
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
