@@ -1,9 +1,8 @@
 <template>
   <section>
-    // DB 선택창 // 조회 단위 선택 버튼 (일 / 주 / 월 / 년) // -> 비교 단위
-    (5일(-주말) / 4주 / 3개월 / -) // 조회 버튼 // 아래 분류별과 병합 출력 //
-    처리 업무 개수 -> 숫자 // 평균 작업 일자 -> 숫자 // 평균 작업 평가 -> 표 //
-    분류별 처리 업무 개수 -> 막대
+    <SearchBar />
+    // 아래 분류별과 병합 출력 // 처리 업무 개수 -> 숫자 // 평균 작업 일자 ->
+    숫자 // 평균 작업 평가 -> 표 // 분류별 처리 업무 개수 -> 막대
     https://echarts.apache.org/examples/en/editor.html?c=bar-y-category-stack //
     가능하면 폴리곤
     https://echarts.apache.org/examples/en/editor.html?c=bar-stack-normalization-and-variation
@@ -14,14 +13,19 @@
 </template>
 
 <script>
+import SearchBar from '@/components/SearchBar'
+
 export default {
+  components: {
+    SearchBar
+  },
   data() {
-    return {};
+    return {}
   },
   computed: {},
   methods: {},
   mounted() {
-    this.$store.dispatch("notionTask/searchTaskDataBases");
+    this.$store.dispatch('notionTask/searchTaskDataBases')
     /*
 option = {
   tooltip: {
@@ -144,6 +148,6 @@ option = {
 
 
 */
-  },
-};
+  }
+}
 </script>

@@ -1,7 +1,4 @@
 {
-  "http.proxySupport": "off",
-  "terminal.integrated.localEchoLatencyThreshold": -1,
-  "terminal.integrated.localEchoEnabled": "off",
   "workbench.colorTheme": "Dracula",
   "editor.renderWhitespace": "all",
   "editor.tabSize": 2,
