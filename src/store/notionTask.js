@@ -1,11 +1,13 @@
 import axios from 'axios'
+import { getDurations } from '@/utils/date'
 
 export default {
   namespaced: true,
   state: () => {
     return {
       taskDBCollection: {}, // 필터용 스택 목록
-      taskList: []
+      taskList: [],
+      isLoading: false
     }
   },
   mutations: {
@@ -28,6 +30,9 @@ export default {
       // 이미 데이터를 받아온 경우 재요청 방지(자주 안바뀔거라)
       if (Object.keys(context.state.taskDBCollection).length != 0) return
 
+      context.commit('updateState', { isLoading: true })
+      context.commit('resetDBList')
+
       try {
         let taskDBCollection = {}
         const res = await _fetchNotionTaskDataBases({
@@ -41,9 +46,10 @@ export default {
             timestamp: 'last_edited_time'
           }
         })
-        console.log('searchTaskDataBases:::res:::', res.data)
+
         res.data.results.forEach(result => {
           const title = result.title[0].plain_text
+          if (title.toLowerCase().includes('sample')) return
           taskDBCollection[result.id] = title
         })
 
@@ -53,44 +59,52 @@ export default {
       } catch (error) {
         console.log(error)
         context.commit('resetDBList')
+      } finally {
+        console.log(
+          'searchTaskDataBases:::taskDBCollection:::',
+          context.state.taskDBCollection
+        )
+        context.commit('updateState', { isLoading: false })
       }
     },
     // 일일업무 검색
-    async searchTask({ commit }, payload) {
-      try {
-        const res = await _fetchNotionTaskReport({
-          database_id: payload.get('db'),
-          filter: {
-            and: [
-              {
-                property: '시작일',
-                date: { on_or_after: '2021-05-10' }
-                // this_week
-              },
-              {
-                property: '종료일',
-                date: { on_or_before: '2025-07-10' }
-                // past_month, past_year
-              }
-            ]
-          },
-          sorts: [
-            {
-              property: 'pagetype',
-              direction: 'ascending' // descending
-            }
-          ]
-          // page_size : 최대 100
-          // start_cursor: 페이지
-        })
-        console.log('searchTask:::res:::', res.data)
+    async searchTask({ state, commit }, payload) {
+      commit('updateState', { isLoading: true })
+      commit('resetTaskList')
 
-        commit('updateState', {
-          taskList: res.data.results
-        })
+      // 조회 기준
+      const { database_id, date, duration } = payload
+      const today = new Date(date)
+      const repeatDurations = getDurations(today, duration) // 표에서 비교하여 같이 보여줄 배열
+      console.log(repeatDurations)
+      try {
+        for (const repeatDuration of repeatDurations) {
+          const res = await _fetchNotionTaskReport({
+            database_id,
+            filter: {
+              and: [
+                {
+                  property: '종료일',
+                  date: { on_or_after: repeatDuration[0] }
+                },
+                {
+                  property: '종료일',
+                  date: { on_or_before: repeatDuration[1] }
+                }
+              ]
+            }
+          })
+
+          commit('updateState', {
+            taskList: [...state.taskList, res.data.results]
+          })
+        }
       } catch (error) {
         console.log(error)
         commit('resetTaskList')
+      } finally {
+        console.log('searchTask:::taskList:::', state.taskList)
+        commit('updateState', { isLoading: false })
       }
     }
   }
