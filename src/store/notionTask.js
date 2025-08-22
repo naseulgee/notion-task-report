@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getDurations } from '@/utils/date'
+import { consoleStart, consoleEnd, consoleChange } from '@/utils/console'
 
 export default {
   namespaced: true,
@@ -27,9 +28,9 @@ export default {
   actions: {
     // 일일업무 데이터베이스 목록 검색
     async searchTaskDataBases(context) {
-      // 이미 데이터를 받아온 경우 재요청 방지(자주 안바뀔거라)
-      if (Object.keys(context.state.taskDBCollection).length != 0) return
+      if (context.state.isLoading) return // 중복 요청 방지
 
+      consoleStart('searchTaskDataBases')
       context.commit('updateState', { isLoading: true })
       context.commit('resetDBList')
 
@@ -57,18 +58,19 @@ export default {
           taskDBCollection
         })
       } catch (error) {
-        console.log(error)
+        console.error(error)
         context.commit('resetDBList')
       } finally {
-        console.log(
-          'searchTaskDataBases:::taskDBCollection:::',
-          context.state.taskDBCollection
-        )
+        consoleChange('taskDBCollection', context.state.taskDBCollection)
         context.commit('updateState', { isLoading: false })
+        consoleEnd('searchTaskDataBases')
       }
     },
     // 일일업무 검색
     async searchTask({ state, commit }, payload) {
+      if (state.isLoading) return // 중복 요청 방지
+
+      consoleStart('searchTask')
       commit('updateState', { isLoading: true })
       commit('resetTaskList')
 
@@ -76,7 +78,7 @@ export default {
       const { database_id, date, duration } = payload
       const today = new Date(date)
       const repeatDurations = getDurations(today, duration) // 표에서 비교하여 같이 보여줄 배열
-      console.log(repeatDurations)
+
       try {
         for (const repeatDuration of repeatDurations) {
           const res = await _fetchNotionTaskReport({
@@ -100,11 +102,12 @@ export default {
           })
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         commit('resetTaskList')
       } finally {
-        console.log('searchTask:::taskList:::', state.taskList)
+        consoleChange('taskList', state.taskList)
         commit('updateState', { isLoading: false })
+        consoleEnd('searchTask')
       }
     }
   }
