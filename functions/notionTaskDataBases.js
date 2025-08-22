@@ -1,4 +1,4 @@
-const { Client } = require('@notionhq/client')
+import { Client } from '@notionhq/client'
 
 export default async function handler(request, response) {
   const payload = await request.json() // 문자열 -> 객체 데이터
