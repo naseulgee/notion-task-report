@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getDurations } from '@/utils/date'
+import { getDurations, getDurationLabels } from '@/utils/date'
 import { consoleStart, consoleEnd, consoleChange } from '@/utils/console'
 
 export default {
@@ -8,6 +8,7 @@ export default {
     return {
       taskDBCollection: {}, // 필터용 스택 목록
       taskList: [],
+      durationLabels: [],
       isLoading: false
     }
   },
@@ -18,6 +19,9 @@ export default {
     },
     resetTaskList(state) {
       state.taskList = []
+    },
+    resetDurationLabels(state) {
+      state.durationLabels = []
     },
     updateState(state, payload) {
       for (const key in payload) {
@@ -97,14 +101,18 @@ export default {
             }
           })
 
+          commit('resetDurationLabels')
           commit('updateState', {
-            taskList: [...state.taskList, res.data.results]
+            taskList: [...state.taskList, res.data.results],
+            durationLabels: getDurationLabels(duration)
           })
         }
       } catch (error) {
         console.error(error)
         commit('resetTaskList')
+        commit('resetDurationLabels')
       } finally {
+        consoleChange('durationLabels', state.durationLabels)
         consoleChange('taskList', state.taskList)
         commit('updateState', { isLoading: false })
         consoleEnd('searchTask')

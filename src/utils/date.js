@@ -1,3 +1,5 @@
+let durationLabels = []
+
 /**
  * getStrDate
  * - 전달 받은 날짜를 yyyy-MM-dd 형태의 문자열로 변환하는 함수
@@ -24,9 +26,11 @@ export function getDurations(targetDate, unit) {
   switch (unit) {
     case 'day':
       getDayDurations(targetDate, durations)
+      durationLabels = [1, 2, 3]
       break
     case 'week':
       getWeekDurations(targetDate, durations)
+      durationLabels = [4]
       break
     case 'month':
       getMonthDurations(targetDate, durations)
@@ -79,4 +83,13 @@ function getYearDurations(targetDate, durations) {
     durations.push([getStrDate(firstDate), getStrDate(lastDate)])
     targetDate.setYear(y - 1)
   }
+}
+
+/**
+ * getDurationLabels
+ *
+ * @returns {Array}
+ */
+export function getDurationLabels() {
+  return durationLabels
 }
