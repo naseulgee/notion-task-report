@@ -23,7 +23,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@notionhq/client": "^2.2.15",
+    "@notionhq/client": "^2.3.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "^10.4.19",
     "netlify-cli": "^17.33.5",
