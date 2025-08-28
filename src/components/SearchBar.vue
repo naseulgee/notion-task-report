@@ -16,7 +16,7 @@
           :key="dbID"
           :value="dbID"
         >
-          {{ dbs[dbID] }}
+          {{ dbs[dbID].title }}
         </option>
       </select>
     </div>
@@ -98,6 +98,7 @@ export default {
   },
   methods: {
     submitForm() {
+      // 데이터 제출
       this.$store.dispatch('notionTask/searchTask', this.formData)
     }
   },
