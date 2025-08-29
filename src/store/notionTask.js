@@ -12,6 +12,7 @@ export default {
       durationLabelList: [],
       // [{ "id": "", "name": "분류1", "color": "", "작업일자": [ 기간별작업일자1, ... ], "평가1": [ 기간별작업수1, ... ], ... }, ...]
       categoryList: [],
+      ratingList: [],
       isLoading: false
     }
   },
@@ -28,6 +29,9 @@ export default {
     },
     resetCategoryList(state) {
       state.categoryList = []
+    },
+    resetRatingList(state) {
+      state.ratingList = []
     },
     updateState(state, payload) {
       for (const key in payload) {
@@ -85,10 +89,17 @@ export default {
       try {
         commit('updateState', { isLoading: true })
         commit('resetTaskList')
+        commit('resetRatingList')
 
         // 조회 기준
         const { database_id, date, duration } = payload
         const today = new Date(date)
+        const ratingList = getPropertyList(
+          state.taskDBCollection[database_id],
+          PROPS.rating,
+          true
+        ).map(r => r.name)
+        ratingList.push('미평가')
         const repeatDurations = getDurations(today, duration) // 표에서 비교하여 같이 보여줄 배열
         const categoryList = _getInitCategoyList(
           state.taskDBCollection[database_id],
@@ -133,9 +144,9 @@ export default {
 
               if (taskCategoryIds.includes(category.id)) {
                 // 해당 카테고리의 전체 카운팅
-                category.totalRating[i] = (category.totalRating[i] || 0) + 1
+                category.totalRating[i] += 1
                 // 해당 카테고리의
-                category[taskRating][i] = (category[taskRating][i] || 0) + 1
+                category[taskRating][i] += 1
                 category[PROPS.work_date][i] += getPropertyNumber(
                   task,
                   PROPS.work_date
@@ -145,6 +156,7 @@ export default {
           }
         }
         commit('updateState', {
+          ratingList,
           categoryList,
           durationLabelList: getDurationLabels(duration)
         })
@@ -153,8 +165,10 @@ export default {
         commit('resetTaskList')
         commit('resetDurationLabelList')
         commit('resetCategoryList')
+        commit('resetRatingList')
       } finally {
         consoleChange('categoryList', state.categoryList)
+        consoleChange('ratingList', state.ratingList)
         consoleChange('durationLabelList', state.durationLabelList)
         consoleChange('taskList', state.taskList)
         commit('updateState', { isLoading: false })
@@ -174,7 +188,7 @@ async function _fetchNotionTaskReport(payload) {
 function _getInitCategoyList(data, repeatDurations) {
   const categories = getPropertyList(data, PROPS.category, true)
   const ratings = getPropertyList(data, PROPS.rating, true)
-  const initArray = new Array(repeatDurations.length)
+  const initArray = Array.from({ length: repeatDurations.length }, () => 0)
   for (const category of categories) {
     // 컬러링
     if (category.color == 'default') category.color = 'lightgray'

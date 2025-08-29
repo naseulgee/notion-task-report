@@ -1,33 +1,27 @@
-<template>
-  <section
-    ref="chart"
-    class="h-full w-full"
-  ></section>
-</template>
-
 <script>
-import * as echarts from 'echarts'
-
+/**
+ * 기간 단위, 분류별 평균 작업 일자 -> 라인
+ */
 export default {
-  components: {},
+  emits: ['updateChartOption'],
+  props: {
+    chartIndex: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
-      chart: null,
       chartOption: {
-        tooltip: {
-          trigger: 'item',
-          axisPointer: { type: 'shadow', label: { show: true } }
-        },
-        legend: {},
-        xAxis: { type: 'value', interval: 1 },
-        yAxis: {
-          name: '기간',
+        xAxis: {
+          name: '',
           type: 'category',
           data: [],
           splitLine: { show: true },
           splitArea: { show: true },
           axisPointer: { show: true, type: 'shadow' }
         },
+        yAxis: { name: '', type: 'value', interval: 0.5 },
         series: []
       }
     }
@@ -47,49 +41,38 @@ export default {
     }
   },
   methods: {
-    resizeChart() {
-      this.chart?.resize()
-    },
-    updateChart() {
-      this.chart?.setOption(this.chartOption)
-    },
     setChartOption() {
+      // 툴팁 생성 시 참고를 위한 변수 선언
+      const labels = [...this.lables].reverse()
+
       // 차트 옵션 세팅
-      const labels = this.lables
-      const series = [] // 툴팁 생성 시 참고를 위해
-      this.chartOption.yAxis.data = labels
+      this.chartOption.xAxis.data = labels
       this.chartOption.series.length = 0
       // 카테고리별 처리 업무 개수
       for (const category of this.categories) {
-        series.push({
+        this.chartOption.series.push({
           name: category.name,
-          type: 'bar',
-          stack: 'category',
+          type: 'line',
           label: { show: true },
           itemStyle: { color: category.color },
           emphasis: { focus: 'series' },
-          data: category.totalRating
+          data: category['작업일자']
+            .map(
+              (d, i) =>
+                Math.round((d * 100) / category.totalRating[i]) / 100 || 0
+            )
+            .reverse()
         })
       }
-      // 단위 별 총 처리 업무 개수
-      series.push({
-        name: 'Total',
-        type: 'bar',
-        label: { show: true },
-        emphasis: { focus: 'series' },
-        data: this.tasks.map(task => task?.length || 0)
-      })
-      this.chartOption.series = series
 
-      // 툴팁 내용 정의
-      this.chartOption.tooltip.formatter = function (params) {
+      this.chartOption.tooltipFormatter = (params, series) => {
         const { seriesName, seriesIndex, marker } = params
         let results = []
 
         // 동일 카테고리의 모든 기간 데이터 조회
         const seriesData = series[seriesIndex]?.data
         labels.forEach((label, i) => {
-          results.push(`${label} : ${seriesData[i] || 0}`)
+          results.push(`${label} : ${seriesData[i] || 0}일`)
         })
         results.push(marker + seriesName) // 카테고리명
 
@@ -103,16 +86,8 @@ export default {
 
       // 업무 목록이 변경되면 차트 변경 진행
       this.setChartOption()
-      // 차트 출력
-      this.updateChart(this.chartOption)
+      this.$emit('updateChartOption', this.chartIndex, this.chartOption)
     }
-  },
-  mounted() {
-    this.chart = echarts.init(this.$refs.chart)
-    window.addEventListener('resize', this.resizeChart)
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.resizeChart)
   }
 }
 </script>

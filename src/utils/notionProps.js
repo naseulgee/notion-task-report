@@ -14,9 +14,13 @@ export const PROPS = {
  */
 export function getPropertyList(task, key, isOption) {
   const property = task?.properties?.[key]
-  if (isOption)
-    return property?.multi_select?.options || property?.select?.options || []
-  return property?.multi_select || property?.select || []
+  if (!property) return
+
+  const { type } = property
+  const pValue = property[type]
+  if (!pValue) return []
+  if (isOption) return pValue.options || []
+  return pValue
 }
 
 /**
@@ -29,5 +33,12 @@ export function getPropertyList(task, key, isOption) {
  */
 export function getPropertyNumber(task, key) {
   const property = task?.properties?.[key]
-  return property?.number || property?.formula?.number || 0
+  if (!property) return
+
+  const { type } = property
+  let pValue = property[type]
+
+  if (!pValue) return 0
+  if (typeof pValue == 'object') pValue = pValue[pValue.type]
+  return pValue || 0
 }
