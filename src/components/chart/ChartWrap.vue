@@ -3,6 +3,10 @@
     ref="chart"
     class="aspect-video w-full"
   >
+    <CntGaugeChart
+      @update-chart-option="updateChartOption"
+      :chart-index="5"
+    />
     <CntBarChart
       @update-chart-option="updateChartOption"
       :chart-index="3"
@@ -21,11 +25,13 @@
 
 <script>
 import * as echarts from 'echarts'
+import CntGaugeChart from '@/components/chart/CntGaugeChart'
 import CntBarChart from '@/components/chart/CntBarChart'
 import AveLineChart from '@/components/chart/AveLineChart'
 
 export default {
   components: {
+    CntGaugeChart,
     CntBarChart,
     AveLineChart
   },
@@ -125,7 +131,7 @@ export default {
   },
   watch: {
     updatedChartCnt(newVal) {
-      if (newVal < 2) return // FIXME:
+      if (newVal < 3) return // FIXME:
 
       // 차트 출력
       this.updateGridPosition()

@@ -21,7 +21,7 @@ export default {
           splitArea: { show: true },
           axisPointer: { show: true, type: 'shadow' }
         },
-        yAxis: { name: '', type: 'value', interval: 0.5 },
+        yAxis: { name: '', type: 'value', minInterval: 0.5 },
         series: []
       }
     }

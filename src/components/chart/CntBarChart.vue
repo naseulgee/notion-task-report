@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       chartOption: {
-        xAxis: { name: '', type: 'value', interval: 1 },
+        xAxis: { name: '', type: 'value', minInterval: 1 },
         yAxis: {
           name: '',
           type: 'category',
