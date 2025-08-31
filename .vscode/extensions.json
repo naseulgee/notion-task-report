@@ -1,3 +1,14 @@
 {
-  "recommendations": ["Vue.volar"]
+  "recommendations": [
+    "Vue.volar",
+    "wayou.vscode-todo-highlight",
+    "dracula-theme.theme-dracula",
+    "formulahendry.auto-rename-tag",
+    "formulahendry.auto-close-tag",
+    "oderwat.indent-rainbow",
+    "vincaslt.highlight-matching-tag",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "christian-kohler.path-intellisense"
+  ]
 }

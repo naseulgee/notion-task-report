@@ -1,7 +1,11 @@
 {
   "workbench.colorTheme": "Dracula",
+  "workbench.preferredLightColorTheme": "Dracula Theme",
+  "workbench.preferredDarkColorTheme": "Dracula Theme",
   "editor.renderWhitespace": "all",
+  "diffEditor.ignoreTrimWhitespace": false,
   "editor.tabSize": 2,
+  "todohighlight.isEnable": true,
   "todohighlight.keywords": [
     {
       "text": "NOTE:",
@@ -29,5 +33,31 @@
     }
   ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "auto-close-tag.activationOnLanguage": [
+    //닫힘태그 자동 완성
+    "xml",
+    "php",
+    "blade",
+    "ejs",
+    "jinja",
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "plaintext",
+    "markdown",
+    "vue",
+    "liquid",
+    "erb",
+    "lang-cfml",
+    "cfml",
+    "HTML (EEx)",
+    "HTML (Eex)",
+    "plist"
+  ],
+  //단축키 설정
+  "emmet.triggerExpansionOnTab": true, //테마
+  "editor.stickyScroll.enabled": true, //편집중인 블럭 노출여부
+  "git.ignoreMissingGitWarning": true, //git이 없으면 경고 무시
 }
