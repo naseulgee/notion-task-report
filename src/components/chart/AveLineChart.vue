@@ -30,14 +30,11 @@ export default {
     isLoading() {
       return this.$store.state.notionTask.isLoading
     },
-    tasks() {
-      return this.$store.state.notionTask.taskList
-    },
     lables() {
       return this.$store.state.notionTask.durationLabelList
     },
     categories() {
-      return this.$store.state.notionTask.categoryList
+      return this.$store.state.notionTask.categoryCollection
     }
   },
   methods: {
@@ -49,7 +46,8 @@ export default {
       this.chartOption.xAxis.data = labels
       this.chartOption.series.length = 0
       // 카테고리별 처리 업무 개수
-      for (const category of this.categories) {
+      for (const cateKey in this.categories) {
+        const category = this.categories[cateKey]
         this.chartOption.series.push({
           name: category.name,
           type: 'line',

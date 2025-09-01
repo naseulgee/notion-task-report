@@ -10,9 +10,10 @@ export default {
       taskDBCollection: {}, // 필터용 스택 목록
       taskList: [],
       durationLabelList: [],
-      // [{ "id": "", "name": "분류1", "color": "", "작업일자": [ 기간별작업일자1, ... ], "평가1": [ 기간별작업수1, ... ], ... }, ...]
-      categoryList: [],
-      ratingList: [],
+      // { "id": { "name": "분류1", "color": "", "작업일자": [ 기간별작업일자1, ... ], "분류별평가ID1": [ 기간별작업수1, ... ], ... }, ... }
+      categoryCollection: {},
+      // { "id": { "name": "평가1", cnt: [ 기간별평가1, ... ] }, ... }
+      ratingCollection: {},
       isLoading: false
     }
   },
@@ -27,11 +28,11 @@ export default {
     resetDurationLabelList(state) {
       state.durationLabelList = []
     },
-    resetCategoryList(state) {
-      state.categoryList = []
+    resetCategoryCollection(state) {
+      state.categoryCollection = {}
     },
-    resetRatingList(state) {
-      state.ratingList = []
+    resetRatingCollection(state) {
+      state.ratingCollection = {}
     },
     updateState(state, payload) {
       for (const key in payload) {
@@ -89,21 +90,35 @@ export default {
       try {
         commit('updateState', { isLoading: true })
         commit('resetTaskList')
-        commit('resetRatingList')
+        commit('resetCategoryCollection')
+        commit('resetRatingCollection')
 
         // 조회 기준
         const { database_id, date, duration } = payload
         const today = new Date(date)
-        const ratingList = getPropertyList(
-          state.taskDBCollection[database_id],
-          PROPS.rating,
-          true
-        ).map(r => r.name)
-        ratingList.push('미평가')
         const repeatDurations = getDurations(today, duration) // 표에서 비교하여 같이 보여줄 배열
-        const categoryList = _getInitCategoyList(
+
+        // 분류, 평가 목록 초기화
+        const ratingCollection = _getInitRatingCollection(
           state.taskDBCollection[database_id],
           repeatDurations
+        )
+        // const ratingCollection = getPropertyList(
+        //   state.taskDBCollection[database_id],
+        //   PROPS.rating,
+        //   true
+        // ).map(r => ({
+        //   name: r.name,
+        //   cnt: Array.from({ length: repeatDurations.length }, () => 0)
+        // }))
+        // ratingCollection.push({
+        //   name: '미평가',
+        //   cnt: Array.from({ length: repeatDurations.length }, () => 0)
+        // })
+        const categoryCollection = _getInitCategoyList(
+          state.taskDBCollection[database_id],
+          repeatDurations,
+          ratingCollection
         )
 
         // 기간 별 업무리스트 업데이트
@@ -130,45 +145,54 @@ export default {
           })
           consoleChange('test', res.data.results)
 
+          // 평가 업데이트
+          for (const rateKey in ratingCollection) {
+            const rating = ratingCollection[rateKey]
+            for (const task of res.data.results) {
+              // 업무 평가
+              const taskRating =
+                getPropertyList(task, PROPS.rating)?.id || 'undefined'
+              if (taskRating.includes(rateKey)) rating.cnt[i] += 1
+            }
+          }
+
           // 분류 업데이트
-          for (const category of categoryList) {
+          for (const cateKey in categoryCollection) {
             for (const task of res.data.results) {
               // 업무 카테고리 목록
               const taskCategoryIds = getPropertyList(
                 task,
                 PROPS.category
               )?.map(c => c.id)
-              // 업무 평가
+              // 분류 별 업무 평가
               const taskRating =
-                getPropertyList(task, PROPS.rating)?.name || '미평가'
+                getPropertyList(task, PROPS.rating)?.id || 'undefined'
 
-              if (taskCategoryIds.includes(category.id)) {
+              if (taskCategoryIds.includes(cateKey)) {
                 // 해당 카테고리의 전체 카운팅
-                category.totalRating[i] += 1
+                categoryCollection[cateKey].totalRating[i] += 1
                 // 해당 카테고리의
-                category[taskRating][i] += 1
-                category[PROPS.work_date][i] += getPropertyNumber(
-                  task,
-                  PROPS.work_date
-                )
+                categoryCollection[cateKey][taskRating].cnt[i] += 1
+                categoryCollection[cateKey][PROPS.work_date][i] +=
+                  getPropertyNumber(task, PROPS.work_date)
               }
             }
           }
         }
         commit('updateState', {
-          ratingList,
-          categoryList,
+          ratingCollection,
+          categoryCollection,
           durationLabelList: getDurationLabels(duration)
         })
       } catch (error) {
         console.error(error)
         commit('resetTaskList')
         commit('resetDurationLabelList')
-        commit('resetCategoryList')
-        commit('resetRatingList')
+        commit('resetCategoryCollection')
+        commit('resetRatingCollection')
       } finally {
-        consoleChange('categoryList', state.categoryList)
-        consoleChange('ratingList', state.ratingList)
+        consoleChange('categoryCollection', state.categoryCollection)
+        consoleChange('ratingCollection', state.ratingCollection)
         consoleChange('durationLabelList', state.durationLabelList)
         consoleChange('taskList', state.taskList)
         commit('updateState', { isLoading: false })
@@ -185,21 +209,46 @@ async function _fetchNotionTaskReport(payload) {
   return await axios.post('/.netlify/functions/notionTaskReport', payload)
 }
 
-function _getInitCategoyList(data, repeatDurations) {
-  const categories = getPropertyList(data, PROPS.category, true)
+function _getInitRatingCollection(data, repeatDurations) {
+  const ratingCollection = {}
   const ratings = getPropertyList(data, PROPS.rating, true)
   const initArray = Array.from({ length: repeatDurations.length }, () => 0)
+
+  ratingCollection.undefined = {
+    name: '미평가',
+    color: 'lightgray',
+    cnt: [...initArray]
+  }
+  for (const rating of ratings) {
+    const { id, name, color } = rating
+    ratingCollection[id] = {
+      name,
+      color: color == 'default' ? 'lightgray' : color
+    }
+    ratingCollection[id].cnt = [...initArray]
+  }
+  return ratingCollection
+}
+function _getInitCategoyList(data, repeatDurations, ratings) {
+  const categoryCollection = {}
+  const categories = getPropertyList(data, PROPS.category, true)
+  const initArray = Array.from({ length: repeatDurations.length }, () => 0)
+
   for (const category of categories) {
-    // 컬러링
-    if (category.color == 'default') category.color = 'lightgray'
-    // 평가 카운트 리셋
-    category.totalRating = [...initArray]
-    category['미평가'] = [...initArray]
-    for (const rating of ratings) {
-      category[rating.name] = [...initArray]
+    const { id, name, color } = category
+    categoryCollection[id] = {
+      name,
+      color: color == 'default' ? 'lightgray' : color,
+      totalRating: [...initArray] // 평가 카운트 리셋
+    }
+    for (const rateKey in ratings) {
+      categoryCollection[id][rateKey] = {
+        name: ratings[rateKey].name,
+        cnt: [...initArray]
+      }
     }
     // 작업일자 리셋
-    category[PROPS.work_date] = [...initArray]
+    categoryCollection[id][PROPS.work_date] = [...initArray]
   }
-  return categories
+  return categoryCollection
 }
