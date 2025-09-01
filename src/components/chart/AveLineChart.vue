@@ -1,18 +1,23 @@
+<template>
+  <section ref="chart"></section>
+</template>
+
 <script>
+import * as echarts from 'echarts'
+
 /**
  * 기간 단위, 분류별 평균 작업 일자 -> 라인
  */
 export default {
-  emits: ['updateChartOption'],
-  props: {
-    chartIndex: {
-      type: Number,
-      default: 0
-    }
-  },
   data() {
     return {
+      chart: null,
       chartOption: {
+        tooltip: {
+          trigger: 'item',
+          axisPointer: { type: 'shadow', label: { show: true } }
+        },
+        legend: {},
         xAxis: {
           name: '',
           type: 'category',
@@ -38,17 +43,24 @@ export default {
     }
   },
   methods: {
+    resizeChart() {
+      this.chart?.resize()
+    },
+    updateChart() {
+      this.chart?.setOption(this.chartOption)
+    },
     setChartOption() {
       // 툴팁 생성 시 참고를 위한 변수 선언
       const labels = [...this.lables].reverse()
+      const series = this.chartOption.series
 
       // 차트 옵션 세팅
       this.chartOption.xAxis.data = labels
-      this.chartOption.series.length = 0
+      series.length = 0
       // 카테고리별 처리 업무 개수
       for (const cateKey in this.categories) {
         const category = this.categories[cateKey]
-        this.chartOption.series.push({
+        series.push({
           name: category.name,
           type: 'line',
           label: { show: true },
@@ -63,7 +75,7 @@ export default {
         })
       }
 
-      this.chartOption.tooltipFormatter = (params, series) => {
+      this.chartOption.tooltip.formatter = params => {
         const { seriesName, seriesIndex, marker } = params
         let results = []
 
@@ -84,8 +96,15 @@ export default {
 
       // 업무 목록이 변경되면 차트 변경 진행
       this.setChartOption()
-      this.$emit('updateChartOption', this.chartIndex, this.chartOption)
+      this.updateChart()
     }
+  },
+  mounted() {
+    this.chart = echarts.init(this.$refs.chart)
+    window.addEventListener('resize', this.resizeChart)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.resizeChart)
   }
 }
 </script>

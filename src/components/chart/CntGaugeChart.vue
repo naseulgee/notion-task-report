@@ -1,21 +1,21 @@
+<template>
+  <section ref="chart"></section>
+</template>
+
 <script>
+import * as echarts from 'echarts'
+
 /**
- * 기간 단위, 분류별 처리 업무 개수 -> 바
+ * 해당 기간 총 처리 업무 개수 -> 게이지
  */
 export default {
-  emits: ['updateChartOption'],
-  props: {
-    chartIndex: {
-      type: Number,
-      default: 0
-    }
-  },
   data() {
     return {
-      progressWidth: 18,
+      chart: null,
       chartOption: {
         series: []
-      }
+      },
+      progressWidth: 18
     }
   },
   computed: {
@@ -24,19 +24,22 @@ export default {
     },
     tasks() {
       return this.$store.state.notionTask.taskList
-    },
-    lables() {
-      return this.$store.state.notionTask.durationLabelList
-    },
-    categories() {
-      return this.$store.state.notionTask.categoryList
     }
   },
   methods: {
+    resizeChart() {
+      this.chart?.resize()
+    },
+    updateChart() {
+      this.chart?.setOption(this.chartOption)
+    },
     setChartOption() {
+      if (this.tasks.length == 0) return
       // 차트 옵션 세팅
       let total = 0
       this.tasks.forEach((task, i) => (total += task.length || 0))
+      total = Math.ceil(total / 10) * 10 // 게이지 눈금 표시를 정수로 하기 위한 세팅
+
       // 단위 별 총 처리 업무 개수
       this.chartOption.series = [
         {
@@ -50,7 +53,8 @@ export default {
           detail: {
             valueAnimation: true,
             fontSize: 80,
-            offsetCenter: [0, '65%']
+            offsetCenter: [0, '60%'],
+            formatter: '{value}개'
           },
           data: [
             {
@@ -60,19 +64,6 @@ export default {
           ]
         }
       ]
-      console.log(this.chartOption.series[0].data.value)
-
-      this.chartOption.tooltipFormatter = (params, series) => {
-        // const { seriesName, seriesIndex, marker } = params
-        // let results = []
-        // // 동일 카테고리의 모든 기간 데이터 조회
-        // const seriesData = series[seriesIndex]?.data
-        // labels.forEach((label, i) => {
-        //   results.push(`${label} : ${seriesData[i] || 0}`)
-        // })
-        // results.push(marker + seriesName) // 카테고리명
-        // return results.reverse().join('<br>')
-      }
     }
   },
   watch: {
@@ -81,8 +72,15 @@ export default {
 
       // 업무 목록이 변경되면 차트 변경 진행
       this.setChartOption()
-      this.$emit('updateChartOption', this.chartIndex, this.chartOption)
+      this.updateChart()
     }
+  },
+  mounted() {
+    this.chart = echarts.init(this.$refs.chart)
+    window.addEventListener('resize', this.resizeChart)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.resizeChart)
   }
 }
 </script>
