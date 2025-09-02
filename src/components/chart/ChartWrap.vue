@@ -8,17 +8,18 @@
       ✅ 기간 단위, 분류별 평균 작업 일자 -> 라인
       기간 단위, 분류별 평균 평가 -> 육각
     -->
-    <CntGaugeChart class="aspect-video w-full" />
+    <!-- <CntGaugeChart class="aspect-video w-full" /> -->
     <RatePieChart class="aspect-video w-full" />
     <CntBarChart class="aspect-video w-full" />
-    <AveLineChart class="aspect-video w-full" />
+    <!-- <AveLineChart class="aspect-video w-full" /> -->
+    <!-- <RateRadarChart class="aspect-video w-full" /> -->
   </section>
 </template>
 
 <script>
-import * as echarts from 'echarts'
 import CntGaugeChart from '@/components/chart/CntGaugeChart'
 import RatePieChart from '@/components/chart/RatePieChart'
+import RateRadarChart from '@/components/chart/RateRadarChart'
 import CntBarChart from '@/components/chart/CntBarChart'
 import AveLineChart from '@/components/chart/AveLineChart'
 
@@ -26,6 +27,7 @@ export default {
   components: {
     CntGaugeChart,
     RatePieChart,
+    RateRadarChart,
     CntBarChart,
     AveLineChart
   }
