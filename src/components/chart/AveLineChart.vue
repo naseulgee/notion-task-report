@@ -35,7 +35,7 @@ export default {
     isLoading() {
       return this.$store.state.notionTask.isLoading
     },
-    lables() {
+    labels() {
       return this.$store.state.notionTask.durationLabelList
     },
     categories() {
@@ -51,7 +51,7 @@ export default {
     },
     setChartOption() {
       // 툴팁 생성 시 참고를 위한 변수 선언
-      const labels = [...this.lables].reverse()
+      const labels = [...this.labels].reverse()
       const series = this.chartOption.series
 
       // 차트 옵션 세팅

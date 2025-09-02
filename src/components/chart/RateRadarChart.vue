@@ -13,14 +13,10 @@ export default {
     return {
       chart: null,
       chartOption: {
-        title: {
-          text: 'Basic Radar Chart'
-        },
-        legend: {},
-        radar: {
-          indicator: [] // 각 지점 -> 평가
-        },
-        series: []
+        tooltip: { trigger: 'item' },
+        legend: { selectedMode: false },
+        radar: { axisLabel: { show: true, hideOverlap: true } },
+        series: [{ type: 'radar', data: [] }]
       }
     }
   },
@@ -28,14 +24,11 @@ export default {
     isLoading() {
       return this.$store.state.notionTask.isLoading
     },
-    tasks() {
-      return this.$store.state.notionTask.taskList
+    labels() {
+      return this.$store.state.notionTask.durationLabelList
     },
     ratings() {
-      return this.$store.state.notionTask.ratingList
-    },
-    categories() {
-      return this.$store.state.notionTask.categoryList
+      return this.$store.state.notionTask.ratingCollection
     }
   },
   methods: {
@@ -46,25 +39,31 @@ export default {
       this.chart?.setOption(this.chartOption)
     },
     setChartOption() {
-      if (this.tasks.length == 0) return
-      this.chartOption.legend.data = this.categories.map(c => c.name)
-      this.chartOption.indicator = this.ratings.map(r => ({ name: r }))
-      // 단위 별 총 처리 업무 개수
-      this.chartOption.series = [
-        {
-          type: 'radar',
-          data: [
-            {
-              value: [4200, 3000, 20000, 35000, 50000, 18000],
-              name: 'Allocated Budget'
-            },
-            {
-              value: [5000, 14000, 28000, 26000, 42000, 21000],
-              name: 'Actual Spending'
-            }
-          ]
+      const ratings = Object.values(this.ratings)
+      let max = 0
+
+      // 평가 별 총 처리 업무 개수
+      const seriesData = []
+      this.labels.forEach((l, i) => {
+        const initArray = Array.from({ length: ratings.length }, () => 0)
+        ratings.forEach((r, j) => {
+          initArray[j] += r.cnt[i]
+          max = Math.max(max, ...r.cnt)
+        })
+        seriesData[i] = {
+          name: l,
+          value: initArray,
+          areaStyle: {}
         }
-      ]
+      })
+      this.chartOption.series[0].data = seriesData
+
+      // 꼭지점 세팅 -> 평가
+      this.chartOption.radar.indicator = ratings.map(r => ({
+        name: r.name,
+        color: r.color,
+        max: Math.ceil(max / 10) * 10 // 눈금 표시를 정수로 하기 위한 세팅
+      }))
     }
   },
   watch: {
