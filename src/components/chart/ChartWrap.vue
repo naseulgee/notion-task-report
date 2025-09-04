@@ -12,10 +12,9 @@
       ✅ 기간 단위, 분류별 평균 평가 -> 육각
     -->
     <CntGaugeChart class="aspect-square w-full" />
-    123
+    <!-- 123 -->
     <RatePieChart class="aspect-square w-full" />
-    <CntBarChart class="aspect-square w-full" />
-    <AveLineChart class="aspect-square w-full" />
+    <CntBarAveLineChart class="aspect-square w-full" />
     <RateRadarChart class="aspect-square w-full" />
   </section>
 </template>
@@ -24,16 +23,14 @@
 import CntGaugeChart from '@/components/chart/CntGaugeChart'
 import RatePieChart from '@/components/chart/RatePieChart'
 import RateRadarChart from '@/components/chart/RateRadarChart'
-import CntBarChart from '@/components/chart/CntBarChart'
-import AveLineChart from '@/components/chart/AveLineChart'
+import CntBarAveLineChart from '@/components/chart/CntBarAveLineChart'
 
 export default {
   components: {
     CntGaugeChart,
     RatePieChart,
     RateRadarChart,
-    CntBarChart,
-    AveLineChart
+    CntBarAveLineChart
   }
 }
 </script>
