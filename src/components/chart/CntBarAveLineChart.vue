@@ -78,6 +78,8 @@ export default {
       const series = this.chartOption.series
       const barZ = 0,
         lineZ = 1
+      const barIndex = 0,
+        lineIndex = 1
 
       // xAxis 데이터(작업일) 설정
       this.chartOption.xAxis[0].data = labels
@@ -87,7 +89,7 @@ export default {
       series.push({
         name: 'Total',
         type: 'bar',
-        yAxisIndex: 0,
+        yAxisIndex: barIndex,
         z: barZ,
         label: { show: true },
         emphasis: { focus: 'series' },
@@ -96,7 +98,7 @@ export default {
       series.push({
         name: 'Total',
         type: 'line',
-        yAxisIndex: 1,
+        yAxisIndex: lineIndex,
         z: lineZ + 1,
         label: { show: true },
         emphasis: { focus: 'series' },
@@ -119,22 +121,22 @@ export default {
           name: category.name,
           type: 'bar',
           stack: 'category',
-          yAxisIndex: 0,
+          yAxisIndex: barIndex,
           z: barZ,
           label: { show: true },
-          itemStyle: { color: category.color },
           emphasis: { focus: 'series' },
+          itemStyle: { color: category.color },
           data: category.totalRating.map(r => r || '')
         })
         // 카테고리별 평균 소요일
         series.push({
           name: category.name,
           type: 'line',
-          yAxisIndex: 1,
+          yAxisIndex: lineIndex,
           z: lineZ,
           label: { show: true },
-          itemStyle: { color: category.color },
           emphasis: { focus: 'series' },
+          itemStyle: { color: category.color },
           data: category['작업일자'].map(
             (d, i) => Math.round((d * 100) / category.totalRating[i]) / 100 || 0
           )
