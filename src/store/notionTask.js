@@ -54,7 +54,7 @@ export default {
         const res = await _fetchNotionTaskDataBases({
           query: '업무',
           filter: {
-            value: 'database',
+            value: 'data_source',
             property: 'object'
           },
           sort: {
@@ -94,29 +94,17 @@ export default {
         commit('resetRatingCollection')
 
         // 조회 기준
-        const { database_id, date, duration } = payload
+        const { data_source_id, date, duration } = payload
         const today = new Date(date)
         const repeatDurations = getDurations(today, duration) // 표에서 비교하여 같이 보여줄 배열
 
         // 분류, 평가 목록 초기화
         const ratingCollection = _getInitRatingCollection(
-          state.taskDBCollection[database_id],
+          state.taskDBCollection[data_source_id],
           repeatDurations
         )
-        // const ratingCollection = getPropertyList(
-        //   state.taskDBCollection[database_id],
-        //   PROPS.rating,
-        //   true
-        // ).map(r => ({
-        //   name: r.name,
-        //   cnt: Array.from({ length: repeatDurations.length }, () => 0)
-        // }))
-        // ratingCollection.push({
-        //   name: '미평가',
-        //   cnt: Array.from({ length: repeatDurations.length }, () => 0)
-        // })
         const categoryCollection = _getInitCategoyList(
-          state.taskDBCollection[database_id],
+          state.taskDBCollection[data_source_id],
           repeatDurations,
           ratingCollection
         )
@@ -125,7 +113,7 @@ export default {
         for (let i = 0; i < repeatDurations.length; i++) {
           const repeatDuration = repeatDurations[i]
           const res = await _fetchNotionTaskReport({
-            database_id,
+            data_source_id,
             filter: {
               and: [
                 {

@@ -5,7 +5,7 @@ export default async function handler(request, response) {
 
   try {
     const notion = new Client({ auth: process.env.NOTION_TASK_REPORT_KEY })
-    const res = await notion.databases.query(payload)
+    const res = await notion.dataSources.query(payload)
 
     return new Response(JSON.stringify(res), { status: 200 })
   } catch (error) {

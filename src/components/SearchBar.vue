@@ -7,7 +7,7 @@
     <div>
       <span class="m-1 mx-2 block text-sm text-gray-400">일지</span>
       <select
-        v-model="formData.database_id"
+        v-model="formData.data_source_id"
         required
         class="min-w-52 cursor-pointer appearance-none rounded-2xl border border-gray-200 px-3 py-1 pr-7 outline-0 *:bg-white hover:bg-gray-100"
       >
@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       formData: {
-        database_id: '',
+        data_source_id: '',
         date: '',
         duration: 'day'
       },
@@ -92,7 +92,7 @@ export default {
   computed: {
     dbs() {
       const dbs = this.$store.state.notionTask.taskDBCollection
-      this.formData.database_id = Object.keys(dbs)[0]
+      this.formData.data_source_id = Object.keys(dbs)[0]
       return dbs
     }
   },
