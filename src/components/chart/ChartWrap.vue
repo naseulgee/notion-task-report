@@ -1,5 +1,8 @@
 <template>
-  <section ref="chart">
+  <section
+    ref="chart"
+    class="grid w-full grid-cols-3 gap-4 overflow-hidden max-lg:grid-cols-2 max-md:grid-cols-1"
+  >
     <!-- 
       ✅ 해당 기간 총 처리 업무 개수 -> 게이지
       해당 기간 총 평균 작업 일자 -> 숫자
@@ -8,11 +11,12 @@
       ✅ 기간 단위, 분류별 평균 작업 일자 -> 라인
       ✅ 기간 단위, 분류별 평균 평가 -> 육각
     -->
-    <CntGaugeChart class="aspect-video w-full" />
-    <RatePieChart class="aspect-video w-full" />
-    <CntBarChart class="aspect-video w-full" />
-    <AveLineChart class="aspect-video w-full" />
-    <RateRadarChart class="aspect-video w-full" />
+    <CntGaugeChart class="aspect-square w-full" />
+    123
+    <RatePieChart class="aspect-square w-full" />
+    <CntBarChart class="aspect-square w-full" />
+    <AveLineChart class="aspect-square w-full" />
+    <RateRadarChart class="aspect-square w-full" />
   </section>
 </template>
 

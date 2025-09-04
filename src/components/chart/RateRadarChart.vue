@@ -14,7 +14,7 @@ export default {
       chart: null,
       chartOption: {
         tooltip: { trigger: 'item' },
-        legend: { selectedMode: false },
+        legend: {},
         radar: { axisLabel: { show: true, hideOverlap: true } },
         series: [{ type: 'radar', data: [] }]
       }

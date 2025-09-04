@@ -45,7 +45,7 @@ export default {
         {
           type: 'gauge',
           min: 0,
-          max: total,
+          max: total || 10,
           progress: { show: true, width: this.progressWidth },
           axisLine: { lineStyle: { width: this.progressWidth } },
           axisTick: { show: false },
