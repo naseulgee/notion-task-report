@@ -7,7 +7,9 @@ import * as echarts from 'echarts'
 import { PROPS, getPropertyNumber } from '@/utils/notionProps'
 
 /**
- * 기간 단위, 분류별 처리 업무 개수 -> 바
+ * 기간 단위, 분류별
+ *  처리 업무 개수 -> 바
+ *  평균 작업 일자 -> 라인
  */
 export default {
   data() {
@@ -18,7 +20,7 @@ export default {
           trigger: 'item',
           axisPointer: { type: 'shadow', label: { show: true } }
         },
-        legend: {},
+        legend: { type: 'scroll' },
         xAxis: [
           {
             name: '작업일',
@@ -68,6 +70,7 @@ export default {
   methods: {
     resizeChart() {
       this.chart?.resize()
+      this.updateChart()
     },
     updateChart() {
       this.chart?.setOption(this.chartOption)
@@ -145,7 +148,7 @@ export default {
 
       this.chartOption.tooltip.formatter = params => {
         const { seriesName, seriesIndex, marker } = params
-        let results = []
+        const results = []
 
         // 동일 카테고리의 모든 기간 데이터 조회
         let seriesBarData, seriesLineData
