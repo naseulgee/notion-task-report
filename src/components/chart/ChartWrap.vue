@@ -3,12 +3,10 @@
     ref="chart"
     class="grid w-full grid-cols-3 gap-4 overflow-hidden max-lg:grid-cols-2 max-md:grid-cols-1"
   >
+    <CntGaugeChart class="aspect-square w-full" />
     <!-- 
-      ✅ 해당 기간 총 처리 업무 개수 -> 게이지
       해당 기간 총 평균 작업 일자 -> 숫자
     -->
-    <CntGaugeChart class="aspect-square w-full" />
-    <!-- 123 -->
     <RatePieChart class="aspect-square w-full" />
     <CntBarAveLineChart class="aspect-square w-full" />
   </section>

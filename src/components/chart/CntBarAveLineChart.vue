@@ -16,6 +16,10 @@ export default {
     return {
       chart: null,
       chartOption: {
+        title: {
+          text: '기간별 처리 업무 수 및 평균 소요일',
+          top: 0
+        },
         tooltip: {
           trigger: 'item',
           axisPointer: { type: 'shadow', label: { show: true } }
@@ -23,7 +27,7 @@ export default {
         legend: { type: 'scroll' },
         xAxis: [
           {
-            name: '작업일',
+            // name: '작업일',
             type: 'category',
             inverse: true,
             data: [],
@@ -79,8 +83,6 @@ export default {
       // 툴팁 생성 시 참고를 위한 변수 선언
       const labels = this.labels
       const series = this.chartOption.series
-      const barZ = 0,
-        lineZ = 1
       const barIndex = 0,
         lineIndex = 1
 
@@ -93,7 +95,6 @@ export default {
         name: 'Total',
         type: 'bar',
         yAxisIndex: barIndex,
-        z: barZ,
         label: { show: true },
         emphasis: { focus: 'series' },
         data: this.tasks?.map(task => task?.length || '')
@@ -102,9 +103,10 @@ export default {
         name: 'Total',
         type: 'line',
         yAxisIndex: lineIndex,
-        z: lineZ + 1,
+        zlevel: 1,
         label: { show: true },
         emphasis: { focus: 'series' },
+        lineStyle: { shadowBlur: 1, shadowColor: '#fff' },
         data: this.tasks?.map(task => {
           const totalCnt = task?.length || 0
           if (!totalCnt) return totalCnt
@@ -125,7 +127,6 @@ export default {
           type: 'bar',
           stack: 'category',
           yAxisIndex: barIndex,
-          z: barZ,
           label: { show: true },
           emphasis: { focus: 'series' },
           itemStyle: { color: category.color },
@@ -136,9 +137,11 @@ export default {
           name: category.name,
           type: 'line',
           yAxisIndex: lineIndex,
-          z: lineZ,
+          z: 0,
+          zlevel: 1,
           label: { show: true },
           emphasis: { focus: 'series' },
+          lineStyle: { shadowBlur: 1, shadowColor: '#fff' },
           itemStyle: { color: category.color },
           data: category['작업일자'].map(
             (d, i) => Math.round((d * 100) / category.totalRating[i]) / 100 || 0

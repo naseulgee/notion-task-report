@@ -6,13 +6,18 @@
 import * as echarts from 'echarts'
 
 /**
- * 해당 기간 총 처리 업무 개수 -> 게이지
+ * 해당 기간
+ *  총 처리 업무 개수 -> 게이지
  */
 export default {
   data() {
     return {
       chart: null,
       chartOption: {
+        title: {
+          text: '총 처리 업무 개수',
+          top: 0
+        },
         series: []
       },
       progressWidth: 18
@@ -29,6 +34,7 @@ export default {
   methods: {
     resizeChart() {
       this.chart?.resize()
+      this.updateChart()
     },
     updateChart() {
       this.chart?.setOption(this.chartOption)
@@ -40,6 +46,11 @@ export default {
       this.tasks.forEach((task, i) => (total += task.length || 0))
       total = Math.ceil(total / 10) * 10 // 게이지 눈금 표시를 정수로 하기 위한 세팅
 
+      // 가로 사이즈 기반 폰트 크기 계산
+      const w = this.$refs.chart.clientWidth
+      const baseFont = Math.max(12, w * 0.03) // 최소 12px
+      const detailFont = Math.max(20, w * 0.1) // 최소 20px
+
       // 단위 별 총 처리 업무 개수
       this.chartOption.series = [
         {
@@ -49,19 +60,16 @@ export default {
           progress: { show: true, width: this.progressWidth },
           axisLine: { lineStyle: { width: this.progressWidth } },
           axisTick: { show: false },
-          axisLabel: { distance: 25, fontSize: 20 },
+          axisLabel: { distance: 25, fontSize: baseFont },
           detail: {
-            valueAnimation: true,
-            fontSize: 80,
-            offsetCenter: [0, '60%'],
-            formatter: '{value}개'
+            formatter: '{value}개',
+            offsetCenter: [0, detailFont + 10],
+            textBorderColor: '#fff',
+            textBorderWidth: 2,
+            fontSize: detailFont,
+            valueAnimation: true
           },
-          data: [
-            {
-              name: '총 처리 업무 수',
-              value: this.tasks[0]?.length
-            }
-          ]
+          data: [{ value: this.tasks[0]?.length }]
         }
       ]
     }

@@ -6,7 +6,7 @@
 import * as echarts from 'echarts'
 
 /**
- * 기간 단위, 분류별
+ * 기간 단위 별
  *  평균 평가 개수 -> 파이
  */
 export default {
@@ -14,6 +14,10 @@ export default {
     return {
       chart: null,
       chartOption: {
+        title: {
+          text: '기간별 평균 평가 수',
+          top: 0
+        },
         tooltip: { trigger: 'item' },
         colorBy: 'series',
         legend: { type: 'scroll' },
