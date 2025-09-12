@@ -12,7 +12,7 @@ export default {
       durationLabelList: [],
       // { "id": { "name": "분류1", "color": "", "작업일자": [ 기간별작업일자1, ... ], "분류별평가ID1": [ 기간별작업수1, ... ], ... }, ... }
       categoryCollection: {},
-      // { "id": { "name": "평가1", cnt: [ 기간별평가1, ... ] }, ... }
+      // { "id": { "name": "평가1", cnt: [ 기간별평가1, ... ], order: 0 }, ... }
       ratingCollection: {},
       isLoading: false
     }
@@ -200,27 +200,29 @@ async function _fetchNotionTaskReport(payload) {
 function _getInitRatingCollection(data, repeatDurations) {
   const ratingCollection = {}
   const ratings = getPropertyList(data, PROPS.rating, true)
-  const initArray = Array.from({ length: repeatDurations.length }, () => 0)
+  const initArray = Array(repeatDurations.length).fill(0)
 
   ratingCollection.undefined = {
     name: '미평가',
     color: 'lightgray',
-    cnt: [...initArray]
+    cnt: [...initArray],
+    order: 99
   }
-  for (const rating of ratings) {
+  ratings.forEach((rating, i) => {
     const { id, name, color } = rating
     ratingCollection[id] = {
       name,
-      color: color == 'default' ? 'lightgray' : color
+      color: color == 'default' ? 'lightgray' : color,
+      order: i
     }
     ratingCollection[id].cnt = [...initArray]
-  }
+  })
   return ratingCollection
 }
 function _getInitCategoyList(data, repeatDurations, ratings) {
   const categoryCollection = {}
   const categories = getPropertyList(data, PROPS.category, true)
-  const initArray = Array.from({ length: repeatDurations.length }, () => 0)
+  const initArray = Array(repeatDurations.length).fill(0)
 
   for (const category of categories) {
     const { id, name, color } = category
@@ -232,6 +234,7 @@ function _getInitCategoyList(data, repeatDurations, ratings) {
     for (const rateKey in ratings) {
       categoryCollection[id][rateKey] = {
         name: ratings[rateKey].name,
+        order: ratings[rateKey].order,
         cnt: [...initArray]
       }
     }
