@@ -15,7 +15,7 @@ export default {
       chart: null,
       chartOption: {
         title: {
-          text: '기간별 평균 평가 수',
+          text: '평가 수',
           top: 0
         },
         tooltip: { trigger: 'item' },

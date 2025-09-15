@@ -1,19 +1,16 @@
 <template>
   <section>
-    <Loading />
     <SearchBar />
-    <ChartWrap />
+    <ChartWrap class="relative mt-4" />
   </section>
 </template>
 
 <script>
-import Loading from '@/components/Loading'
 import SearchBar from '@/components/SearchBar'
 import ChartWrap from '@/components/chart/ChartWrap'
 
 export default {
   components: {
-    Loading,
     SearchBar,
     ChartWrap
   },

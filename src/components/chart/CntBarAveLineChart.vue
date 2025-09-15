@@ -17,7 +17,7 @@ export default {
       chart: null,
       chartOption: {
         title: {
-          text: '기간별 처리 업무 수 및 평균 소요일',
+          text: '처리 업무 수 및 평균 소요일',
           top: 0
         },
         tooltip: {

@@ -29,7 +29,7 @@ export default {
           plugins: {
             title: {
               display: true,
-              text: '기간 및 분류별 평균 평가',
+              text: '분류 평균 평가',
               color: '#000',
               font: { size: 18 }
             },
