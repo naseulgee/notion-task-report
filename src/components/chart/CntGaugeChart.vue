@@ -15,7 +15,7 @@ export default {
       chart: null,
       chartOption: {
         title: {
-          text: '총 처리 업무 개수',
+          text: '처리 업무 개수',
           top: 0
         },
         series: []

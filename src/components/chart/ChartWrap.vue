@@ -1,20 +1,27 @@
 <template>
-  <section
-    ref="chart"
-    class="grid w-full grid-cols-3 gap-4 overflow-hidden max-lg:grid-cols-2 max-md:grid-cols-1"
-  >
-    <CntGaugeChart class="aspect-square w-full" />
-    <!-- 
-      해당 기간 총 평균 작업 일자 -> 숫자
-      -->
-    <RateRadarChart class="aspect-square w-full" />
-    <RatePieChart class="aspect-square w-full" />
-    <CntBarAveLineChart class="aspect-square w-full" />
+  <section ref="chart">
+    <article>
+      <h1 :class="titleClass">이번달</h1>
+      <div :class="chartWrapClass">
+        <CntGaugeChart :class="chartClass" />
+        <AveCountUp :class="chartClass" />
+      </div>
+    </article>
+
+    <article>
+      <h1 :class="titleClass">기간별</h1>
+      <div :class="chartWrapClass">
+        <RateRadarChart :class="chartClass" />
+        <RatePieChart :class="chartClass" />
+        <CntBarAveLineChart :class="chartClass" />
+      </div>
+    </article>
   </section>
 </template>
 
 <script>
 import CntGaugeChart from '@/components/chart/CntGaugeChart'
+import AveCountUp from '@/components/chart/AveCountUp'
 import RateRadarChart from '@/components/chart/RateRadarChart'
 import RatePieChart from '@/components/chart/RatePieChart'
 import CntBarAveLineChart from '@/components/chart/CntBarAveLineChart'
@@ -22,9 +29,22 @@ import CntBarAveLineChart from '@/components/chart/CntBarAveLineChart'
 export default {
   components: {
     CntGaugeChart,
+    AveCountUp,
     RateRadarChart,
     RatePieChart,
     CntBarAveLineChart
+  },
+  data() {
+    return {
+      titleClass: 'text-center text-2xl font-bold',
+      chartWrapClass: 'w-full flex flex-wrap justify-center items-center gap-4',
+      chartClass: 'aspect-square h-[min(calc(45vh_-_35px),_400px)]'
+    }
+  },
+  methods: {
+    getClass(prefix, classList) {
+      return classList.map(c => prefix + c).join(' ')
+    }
   }
 }
 </script>
